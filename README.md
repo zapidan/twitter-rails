@@ -1,4 +1,4 @@
-# Ruby on Rails Tutorial: sample application (Chapter 6)
+# Ruby on Rails Tutorial: sample application (Chapter 7)
 
 This is the sample application for the
 [*Ruby on Rails Tutorial:
