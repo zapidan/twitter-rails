@@ -17,11 +17,14 @@ class UsersEditTest < ActionDispatch::IntegrationTest
   	assert_template 'users/edit'
   end
 
-  test "successful edit with friendly forwarding" do
+  test "successful edit with friendly forwarding on subsequent logins" do
   	get edit_user_path(@user)
+    assert_equal edit_user_url, session[:forwarding_url]
   	assert_redirected_to login_path
   	assert_not flash[:danger].empty?
+    assert_equal edit_user_url, session[:forwarding_url]
   	log_in_as(@user)
+    assert session[:forwarding_url].nil?
   	assert_redirected_to edit_user_path(@user)
   	name = "Foo Bar"
   	email = "foo@bar.com"
@@ -34,5 +37,8 @@ class UsersEditTest < ActionDispatch::IntegrationTest
   	@user.reload
   	assert_equal name, @user.name
   	assert_equal email, @user.email
+    log_in_as(@user)
+    assert_redirected_to user_path(@user)
+    assert session[:forwarding_url].nil?
   end
 end
