@@ -15,6 +15,9 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
   								 password_confirmation:  "bar" }
     end
     assert_template 'users/new'
+    assert_select 'div#error_explanation'
+    assert_select 'div.alert-danger'
+    assert_select 'div.field_with_errors'
   end
 
   test "valid signup information with account activation" do
@@ -43,6 +46,10 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_template 'users/show'
     assert is_logged_in?
+    assert_not flash[:success].empty?
+    # Refresh the page, flash should not appear
+    get user_path
+    assert flash[:success].nil?
     
   	# assert_template 'users/show'
    #  assert is_logged_in?
