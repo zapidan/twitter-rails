@@ -30,4 +30,34 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
   	assert_template 'users/index'
   	assert_select 'a', text: 'delete', count: 0
   end
+
+  test "should not show non active users" do
+    @user = @non_admin
+    assert @user.activated?
+    @user.toggle!(:activated)
+    assert_not @user.activated?
+    log_in_as(@admin)
+    get user_path(@admin)
+    assert_select 'section.user_info'
+    assert_select 'h1', text: 'Michael Example'
+    get user_path(@user)
+    assert_select 'section.user_info', count: 0
+    assert_select 'h1', text: 'Sterling Archer', count: 0
+    assert_response :redirect
+    assert_redirected_to root_url
+    assert_not @user.activated?
+  end
+
+  test "index shows only activated users" do
+    @user = @non_admin
+    assert @user.activated?
+    @user.toggle!(:activated)
+    assert_not @user.activated?
+    log_in_as(@admin)
+    get users_path
+    first_page_of_users = User.paginate(page: 1)
+    first_page_of_users.each do |user|
+      assert_select 'a[href=?]', user_path(user) unless user = @user
+    end
+  end
 end

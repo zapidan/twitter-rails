@@ -69,14 +69,14 @@ class User < ActiveRecord::Base
     # Creates and assigns the reset token and digest
     def create_reset_digest
         self.reset_token = User.new_token
-        update_attribute(:reset_digest,  User.digest(reset_token))
-        update_attribute(:reset_sent_at, Time.zone.now)
+        update_columns(reset_digest: User.digest(reset_token),
+                       reset_sent_at: Time.zone.now)
     end
 
     # Activates an account.
     def activate
-        update_attribute(:activated, true)
-        update_attribute(:activated_at, Time.zone.now)
+        update_columns(activated: true,
+                       activated_at: Time.zone.now)
     end
 
     # Returns true if a password reset has expired.
