@@ -2,21 +2,17 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:edit, :update, :index, :destroy, :following, :followers]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: :destroy
-  
+
   def index
     @users = User.where(activated: true).paginate(page: params[:page], per_page: 20)
   end
-  
+
   def create
   	@user = User.new(user_params)
   	if @user.save
-      # @user.activation_token = User.new_token
       @user.send_activation_email
       flash[:info] = "Please check your email to activate your account."
       redirect_to root_url
-    #   log_in @user
-  		# flash[:success] = "Welcome to the Sample App, #{@user.name}!"
-  		# redirect_to @user
   	else
   		render 'new'
     end
@@ -71,7 +67,7 @@ class UsersController < ApplicationController
 
   	def user_params
   		params.require(:user).permit(:name, :email, :password,
-  									 :password_confirmation)
+  									               :password_confirmation)
   	end
 
     # Before filters
